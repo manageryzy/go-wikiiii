@@ -1,58 +1,25 @@
 package models
-import "time"
 
-const cacheExpressTime  = 3600
+import (
+	"github.com/astaxie/beego/cache"
+)
 
-type pageCacheItem struct {
-	title string
-	content string
-	update int64
+const MaxCacheTime = 3600
+
+var PageCache cache.Cache
+
+func PageCacheGet(title string) string {
+	return PageCache.Get(title).(string)
 }
 
-var pageCache = map[string]pageCacheItem{}
-
-func PageCacheGet(title string)(res string){
-	cache,e := pageCache[title]
-	if !e {
-		res = ""
-		return
-	}
-
-	res = cache.content
-	return
+func isCacheExist(title string) (res bool) {
+	return PageCache.IsExist(title)
 }
 
-func isCacheExist(title string)(res bool){
-	cache,e := pageCache[title]
-	if !e {
-		res = false
-		return
-	}
-
-	if time.Now().Unix() -  cache.update > cacheExpressTime{
-		delete(pageCache,title)
-		res = false
-		return
-	}
-
-	res = true
-	return
+func pageCacheAdd(title string, content string) {
+	PageCache.Put(title, content, MaxCacheTime)
 }
 
-func pageCacheAdd(title string,content string){
-	o := pageCacheItem{}
-	o.content = content
-	o.update = time.Now().Unix() - 3590
-	o.title = title
-
-	pageCache[title] = o
-
-}
-
-func pageCacheGC()  {
-	for title,cache := range pageCache{
-		if time.Now().Unix() -  cache.update > cacheExpressTime{
-			delete(pageCache,title)
-		}
-	}
+func pageCacheRemove(title string) {
+	PageCache.Delete(title)
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/cache"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/manageryzy/go-wikiiii/models"
@@ -16,5 +17,14 @@ func init() {
 func main() {
 	models.O = orm.NewOrm()
 	models.O.Using("default") // 默认使用 default，你可以指定为其他数据库
+
+	var err error
+	models.PageCache, err = cache.NewCache("memory", `{"interval":300}`)
+
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
 	beego.Run()
 }

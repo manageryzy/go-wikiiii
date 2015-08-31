@@ -34,6 +34,7 @@
       <root url="file://$PROJECT_DIR$/../../smartystreets/assertions/.git" />
       <root url="file://$PROJECT_DIR$/../../beego/bee/testdata" />
       <root url="file://$PROJECT_DIR$/../../../code.google.com/p/cascadia/.hg" />
+      <root url="file://$PROJECT_DIR$/.git" />
       <root url="file://$PROJECT_DIR$/../../russross/blackfriday/.git" />
       <root url="file://$PROJECT_DIR$/../../dustin/go-wikiparse/.git" />
       <root url="file://$PROJECT_DIR$/../../astaxie/beego/utils/testdata" />
