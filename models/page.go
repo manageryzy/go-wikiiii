@@ -108,9 +108,10 @@ func pageRenderMarkdown(content string) (res string) {
 }
 
 func pageRenderLinks(content string) (res string) {
-	re := regexp.MustCompile("[[.*]]")
+	re := regexp.MustCompile("\\[\\[.*\\]\\]")
 	links := re.FindAllString(content, -1)
 
+	println(content)
 	for _, include := range links {
 		title := strings.Trim(include, "[] ")
 

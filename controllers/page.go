@@ -31,8 +31,8 @@ func (this *PageController) Get() {
 		this.Data["Page"] = models.PageGet(urls[1])
 		this.TplNames = "page.tpl"
 	} else if len(urls) == 3 {
-		if urls[2] == "edit" {
-			this.TplNames = "edit.tpl"
+		if urls[2] == "category" {
+			this.TplNames = "category.tpl"
 		} else {
 			this.Abort("403")
 		}
