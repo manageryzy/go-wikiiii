@@ -1,0 +1,49 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;go-wikiiii&gt;">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../../golang.org" />
+      <root url="file://$PROJECT_DIR$/../.." />
+      <root url="file://$PROJECT_DIR$/../../../code.google.com" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <excluded>
+      <root url="file://$PROJECT_DIR$/../../beego/bee/.git" />
+      <root url="file://$PROJECT_DIR$/../../shurcooL/highlight_go/.git" />
+      <root url="file://$PROJECT_DIR$/../../shurcooL/github_flavored_markdown/.git" />
+      <root url="file://$PROJECT_DIR$/../../dustin/go-wikiparsego/.git" />
+      <root url="file://$PROJECT_DIR$/../../shurcooL/highlight_diff/.git" />
+      <root url="file://$PROJECT_DIR$" />
+      <root url="file://$PROJECT_DIR$/../../shurcooL/sanitized_anchor_name/.git" />
+      <root url="file://$PROJECT_DIR$/../../smartystreets/goconvey/.git" />
+      <root url="file://$PROJECT_DIR$/../../astaxie/beego/.git" />
+      <root url="file://$PROJECT_DIR$/../../sourcegraph/syntaxhighlight/.git" />
+      <root url="file://$PROJECT_DIR$/../../sourcegraph/syntaxhighlight/testdata" />
+      <root url="file://$PROJECT_DIR$/../../howeyc/fsnotify/.git" />
+      <root url="file://$PROJECT_DIR$/../../../golang.org/x/net/html/testdata" />
+      <root url="file://$PROJECT_DIR$/../../lib/pq/.git" />
+      <root url="file://$PROJECT_DIR$/../../ogier/pflag/.git" />
+      <root url="file://$PROJECT_DIR$/../../PuerkitoBio/goquery/testdata" />
+      <root url="file://$PROJECT_DIR$/../../jtolds/gls/.git" />
+      <root url="file://$PROJECT_DIR$/../../microcosm-cc/bluemonday/.git" />
+      <root url="file://$PROJECT_DIR$/../../sergi/go-diff/.git" />
+      <root url="file://$PROJECT_DIR$/../../../golang.org/x/net/html/charset/testdata" />
+      <root url="file://$PROJECT_DIR$/../../renstrom/go-wiki/.git" />
+      <root url="file://$PROJECT_DIR$/.idea" />
+      <root url="file://$PROJECT_DIR$/../../PuerkitoBio/goquery/.git" />
+      <root url="file://$PROJECT_DIR$/../../smartystreets/assertions/.git" />
+      <root url="file://$PROJECT_DIR$/../../beego/bee/testdata" />
+      <root url="file://$PROJECT_DIR$/../../../code.google.com/p/cascadia/.hg" />
+      <root url="file://$PROJECT_DIR$/../../russross/blackfriday/.git" />
+      <root url="file://$PROJECT_DIR$/../../dustin/go-wikiparse/.git" />
+      <root url="file://$PROJECT_DIR$/../../astaxie/beego/utils/testdata" />
+      <root url="file://$PROJECT_DIR$/../../russross/blackfriday/testdata" />
+      <root url="file://$PROJECT_DIR$/../../go-sql-driver/mysql/.git" />
+      <root url="file://$PROJECT_DIR$/../../../golang.org/x/net/.git" />
+      <root url="file://$PROJECT_DIR$/../../miekg/dns/.git" />
+      <root url="file://$PROJECT_DIR$/../../sourcegraph/annotate/.git" />
+      <root url="file://$PROJECT_DIR$/../../sourcegraph/annotate/testdata" />
+      <root url="file://$PROJECT_DIR$/../../favframework/debug/.git" />
+    </excluded>
+  </library>
+</component>
