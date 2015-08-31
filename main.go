@@ -12,6 +12,7 @@ import (
 func init() {
 	orm.RegisterDriver("mysql", orm.DR_MySQL)
 	orm.RegisterDataBase("default", "mysql", "root:password@/gowikiiii?charset=utf8")
+	orm.Debug = true
 }
 
 func main() {

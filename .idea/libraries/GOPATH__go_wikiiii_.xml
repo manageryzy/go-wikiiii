@@ -23,6 +23,7 @@
       <root url="file://$PROJECT_DIR$/../../../golang.org/x/net/html/testdata" />
       <root url="file://$PROJECT_DIR$/../../lib/pq/.git" />
       <root url="file://$PROJECT_DIR$/../../ogier/pflag/.git" />
+      <root url="file://$PROJECT_DIR$/../../russross/blackfriday-tool/.git" />
       <root url="file://$PROJECT_DIR$/../../PuerkitoBio/goquery/testdata" />
       <root url="file://$PROJECT_DIR$/../../jtolds/gls/.git" />
       <root url="file://$PROJECT_DIR$/../../microcosm-cc/bluemonday/.git" />

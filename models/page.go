@@ -1,0 +1,143 @@
+package models
+
+import (
+	"github.com/microcosm-cc/bluemonday"
+	"github.com/russross/blackfriday"
+	"html/template"
+	"regexp"
+	"strings"
+)
+
+const MaxIncludeLayers = 5
+
+const markdownExtensions = 0 |
+	blackfriday.EXTENSION_NO_INTRA_EMPHASIS |
+	blackfriday.EXTENSION_TABLES |
+	blackfriday.EXTENSION_FENCED_CODE |
+	blackfriday.EXTENSION_AUTOLINK |
+	blackfriday.EXTENSION_STRIKETHROUGH |
+	blackfriday.EXTENSION_SPACE_HEADERS |
+	blackfriday.EXTENSION_HEADER_IDS |
+	blackfriday.EXTENSION_BACKSLASH_LINE_BREAK |
+	blackfriday.EXTENSION_DEFINITION_LISTS
+
+const htmlFlags = 0 |
+	blackfriday.HTML_USE_XHTML |
+	blackfriday.HTML_USE_SMARTYPANTS |
+	blackfriday.HTML_SMARTYPANTS_FRACTIONS |
+	blackfriday.HTML_SMARTYPANTS_LATEX_DASHES
+
+//获得一个页面
+func PageGet(title string) (res template.HTML) {
+	if isCacheExist(title) {
+		res = PageCacheGet(title)
+		return
+	} else {
+		res = template.HTML(PageRender(title))
+		pageCacheAdd(title, res)
+		return
+	}
+}
+
+//强制渲染一个页面
+func PageRender(title string) (res string) {
+	page, exist := PageGetSQL(title)
+
+	if !exist {
+		res = "本页面没有内容，点击<a href=\"/edit/" + title + "\">此处</a>编辑"
+		return
+	}
+
+	page = pageRenderInclude(page, 0)
+	page = pageRenderLinks(page)
+	page = pageRenderMarkdown(page)
+
+	res = page
+
+	return
+}
+
+func PageGetSQL(title string) (res string, exist bool) {
+	p := Page{Title: title}
+	err := O.Read(&p)
+
+	if err != nil {
+		exist = false
+		res = ""
+		return
+	}
+
+	exist = true
+	res = p.Page
+
+	return
+}
+
+func pageRenderInclude(content string, layers int) (res string) {
+	if layers > MaxIncludeLayers {
+		res = "<pre>Error: Too much layers included!!!</pre>"
+		return
+	}
+
+	re := regexp.MustCompile("{{.*}}")
+	includes := re.FindAllString(content, -1)
+
+	for _, include := range includes {
+		title := strings.Trim(include, "{} ")
+
+		subPage, exist := PageGetSQL(title)
+		if exist {
+			r := strings.NewReplacer(include, pageRenderInclude(subPage, layers+1))
+			content = r.Replace(content)
+		} else {
+			r := strings.NewReplacer(include, "<pre>Error: Include page not found!</pre>")
+			content = r.Replace(content)
+		}
+	}
+
+	res = content
+	return
+}
+
+func pageRenderMarkdown(content string) (res string) {
+	renderer := blackfriday.HtmlRenderer(htmlFlags, "", "")
+	unsafe := blackfriday.MarkdownOptions([]byte(content), renderer, blackfriday.Options{
+		Extensions: markdownExtensions})
+	res = string(bluemonday.UGCPolicy().SanitizeBytes(unsafe)[:])
+	return
+}
+
+func pageRenderLinks(content string) (res string) {
+	re := regexp.MustCompile("[[.*]]")
+	links := re.FindAllString(content, -1)
+
+	for _, include := range links {
+		title := strings.Trim(include, "[] ")
+
+		r := strings.NewReplacer(include, "<a href=\"/page/"+title+"\" >"+title+"</a>")
+		content = r.Replace(content)
+	}
+	res = content
+	return
+}
+
+//更新页面
+func PageEdit(title string, content string, uid int) (res bool) {
+	pageCacheRemove(title)
+
+	p := Page{Title: title, Page: content, Uid: uid}
+	num, err := O.Update(&p)
+
+	if err != nil {
+		return false
+	}
+
+	if num == 0 {
+		_, err := O.Insert(&p)
+
+		if err != nil {
+			return false
+		}
+	}
+	return true
+}
