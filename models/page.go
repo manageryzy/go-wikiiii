@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/astaxie/beego/orm"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 	"html/template"
@@ -61,6 +62,18 @@ func PageRenderString(page string) (res string) {
 	res = page
 
 	return
+}
+
+func PageGetCategory(title string) []orm.Params {
+	var maps []orm.Params
+	O.QueryTable("categories").Filter("title", title).Values(&maps)
+	return maps
+}
+
+func CategoryGetPages(cat string) []orm.Params {
+	var maps []orm.Params
+	O.QueryTable("categories").Filter("category", cat).Values(&maps)
+	return maps
 }
 
 func PageGetSQL(title string) (res string, exist bool) {

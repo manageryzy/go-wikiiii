@@ -26,12 +26,14 @@ func (this *PageController) Get() {
 	} else if len(urls) == 2 {
 		this.Data["Title"] = urls[1]
 		this.Data["Page"] = models.PageGet(urls[1])
+		this.Data["Category"] = models.PageGetCategory(urls[1])
 		this.TplNames = "page.tpl"
 	} else if len(urls) == 3 {
 		if urls[2] == "category" {
 			this.Data["Title"] = urls[1]
 			this.Data["Page"] = models.PageGet(urls[1])
-
+			this.Data["Category"] = models.PageGetCategory(urls[1])
+			this.Data["Pages"] = models.CategoryGetPages(urls[1])
 			this.TplNames = "category.tpl"
 		} else {
 			this.Abort("403")
