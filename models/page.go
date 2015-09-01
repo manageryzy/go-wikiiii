@@ -4,6 +4,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 	"html/template"
+	"io/ioutil"
 	"regexp"
 	"strings"
 )
@@ -122,11 +123,17 @@ func pageRenderLinks(content string) (res string) {
 }
 
 //更新页面
-func PageEdit(title string, content string, uid int, safe bool) (res bool) {
+func PageEdit(title string, content string, uid int, safe bool, fileName string) (res bool) {
 	pageCacheRemove(title)
 
 	if safe {
 		content = string(bluemonday.UGCPolicy().SanitizeBytes([]byte(content)))
+	}
+
+	err := ioutil.WriteFile(fileName, []byte(content), 0644)
+	if err != nil {
+		println(err.Error())
+		return false
 	}
 
 	p := Page{Title: title, Page: content, Uid: uid}
@@ -143,5 +150,9 @@ func PageEdit(title string, content string, uid int, safe bool) (res bool) {
 			return false
 		}
 	}
+
+	h := History{Title: title, Path: fileName, Uid: uid}
+	O.Insert(&h)
+
 	return true
 }

@@ -1,10 +1,15 @@
 package controllers
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"github.com/astaxie/beego"
 	"github.com/manageryzy/go-wikiiii/models"
 	"net/url"
+	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 const PERMISSION_EDIT = 1
@@ -86,7 +91,15 @@ func (this *EditController) Post() {
 			return
 		}
 
-		if models.PageEdit(urls[1], content, this.uid, !script) {
+		h := md5.New()
+		h.Write([]byte(urls[1]))
+		Md5 := hex.EncodeToString(h.Sum(nil))
+
+		dir := "./data/" + Md5 + "/"
+		filePath := dir + string(strconv.FormatInt(time.Now().Unix(), 10)) + ".md"
+		os.MkdirAll(dir, 0777)
+
+		if models.PageEdit(urls[1], content, this.uid, !script, filePath) {
 			this.Ctx.Redirect(302, "/page/"+urls[1])
 			return
 		} else {

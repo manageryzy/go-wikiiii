@@ -28,6 +28,7 @@
       <root url="file://$PROJECT_DIR$/../../jtolds/gls/.git" />
       <root url="file://$PROJECT_DIR$/../../microcosm-cc/bluemonday/.git" />
       <root url="file://$PROJECT_DIR$/../../sergi/go-diff/.git" />
+      <root url="file://$PROJECT_DIR$/../../andelf/go-curl/.git" />
       <root url="file://$PROJECT_DIR$/../../../golang.org/x/net/html/charset/testdata" />
       <root url="file://$PROJECT_DIR$/../../renstrom/go-wiki/.git" />
       <root url="file://$PROJECT_DIR$/.idea" />
