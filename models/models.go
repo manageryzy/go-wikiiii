@@ -12,7 +12,8 @@ type User struct {
 }
 
 type Categories struct {
-	Title    string `orm:"pk;index"`
+	Id       int    `orm:"pk;auto"`
+	Title    string `orm:"index"`
 	Category string `orm:"index"`
 }
 
@@ -30,7 +31,8 @@ type File struct {
 }
 
 type History struct {
-	Title  string    `orm:"pk;index"`
+	Hid    int       `orm:"pk"`
+	Title  string    `orm:"index"`
 	Path   string    `orm:"type(text)"`
 	Uid    int       `orm:"index"`
 	Update time.Time `orm:"auto_now;index;type(datetime)"`

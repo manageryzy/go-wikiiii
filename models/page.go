@@ -49,6 +49,11 @@ func PageRender(title string) (res string) {
 		return
 	}
 
+	res = page
+	return
+}
+
+func PageRenderString(page string) (res string) {
 	page = pageRenderInclude(page, 0)
 	page = pageRenderLinks(page)
 	page = pageRenderMarkdown(page)
@@ -135,6 +140,22 @@ func PageEdit(title string, content string, uid int, safe bool, fileName string)
 		println(err.Error())
 		return false
 	}
+
+	O.QueryTable("categories").Filter("title", title).Delete()
+
+	re := regexp.MustCompile("\\[`\\[.*\\]`\\]")
+	cats := re.FindAllString(content, -1)
+	for _, include := range cats {
+		category := strings.Trim(include, "[`] ")
+
+		cat := Categories{Title: title, Category: category}
+		O.Insert(&cat)
+
+		r := strings.NewReplacer(include, "")
+		content = r.Replace(content)
+	}
+
+	content = PageRenderString(content)
 
 	p := Page{Title: title, Page: content, Uid: uid}
 	num, err := O.Update(&p)

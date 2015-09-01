@@ -11,7 +11,7 @@ import (
 
 func init() {
 	orm.RegisterDriver("mysql", orm.DR_MySQL)
-	orm.RegisterDataBase("default", "mysql", "root:password@/gowikiiii?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("mysqluser")+":"+beego.AppConfig.String("mysqlpass")+"@/"+beego.AppConfig.String("mysqldb")+"?charset=utf8")
 	orm.Debug = true
 }
 
@@ -20,7 +20,7 @@ func main() {
 	models.O.Using("default") // 默认使用 default，你可以指定为其他数据库
 
 	var err error
-	models.PageCache, err = cache.NewCache("memory", `{"interval":300}`)
+	models.PageCache, err = cache.NewCache("memory", `{"interval":60}`)
 
 	if err != nil {
 		println(err.Error())

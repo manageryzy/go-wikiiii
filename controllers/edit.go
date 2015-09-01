@@ -4,7 +4,9 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 	"github.com/manageryzy/go-wikiiii/models"
+	"io/ioutil"
 	"net/url"
 	"os"
 	"strconv"
@@ -51,9 +53,19 @@ func (this *EditController) Get() {
 	urls := strings.Split(url, "/")
 
 	if len(urls) == 2 {
-		page, exist := models.PageGetSQL(urls[1])
-		if exist {
-			this.Data["Src"] = page
+		var maps []orm.Params
+		num, err := models.O.QueryTable("history").Filter("title", urls[1]).OrderBy("-update").Limit(1).Values(&maps)
+		if err != nil {
+			this.Abort("500")
+		}
+
+		if num != 0 {
+			b, e := ioutil.ReadFile(maps[0]["Path"].(string))
+
+			if e != nil {
+				this.Abort("500")
+			}
+			this.Data["Src"] = string(b)
 		} else {
 			this.Data["Src"] = ""
 		}
