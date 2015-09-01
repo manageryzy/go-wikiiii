@@ -10,7 +10,8 @@ type LoginController struct {
 
 func (this *LoginController) Get() {
 	//this.Data["Website"] = "beego.me"
-	
-	this.SetSession("uid",1)
+
+	this.SetSession("uid", 1)
+	this.SetSession("permission", PERMISSION_EDIT|PERMISSION_EDIT_SCRIPT)
 	this.TplNames = "login.tpl"
 }

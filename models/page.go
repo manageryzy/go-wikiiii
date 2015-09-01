@@ -103,7 +103,7 @@ func pageRenderMarkdown(content string) (res string) {
 	renderer := blackfriday.HtmlRenderer(htmlFlags, "", "")
 	unsafe := blackfriday.MarkdownOptions([]byte(content), renderer, blackfriday.Options{
 		Extensions: markdownExtensions})
-	res = string(bluemonday.UGCPolicy().SanitizeBytes(unsafe)[:])
+	res = string(unsafe)
 	return
 }
 
@@ -111,7 +111,6 @@ func pageRenderLinks(content string) (res string) {
 	re := regexp.MustCompile("\\[\\[.*\\]\\]")
 	links := re.FindAllString(content, -1)
 
-	println(content)
 	for _, include := range links {
 		title := strings.Trim(include, "[] ")
 
@@ -123,8 +122,12 @@ func pageRenderLinks(content string) (res string) {
 }
 
 //更新页面
-func PageEdit(title string, content string, uid int) (res bool) {
+func PageEdit(title string, content string, uid int, safe bool) (res bool) {
 	pageCacheRemove(title)
+
+	if safe {
+		content = string(bluemonday.UGCPolicy().SanitizeBytes([]byte(content)))
+	}
 
 	p := Page{Title: title, Page: content, Uid: uid}
 	num, err := O.Update(&p)

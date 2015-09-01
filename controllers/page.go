@@ -12,9 +12,6 @@ type PageController struct {
 }
 
 func (this *PageController) Get() {
-	//this.Data["Website"] = "beego.me"
-	//this.Data["Email"] = "astaxie@gmail.com"
-
 	url, err := url.QueryUnescape(this.Ctx.Input.Request.URL.String())
 
 	if err != nil {
@@ -32,6 +29,9 @@ func (this *PageController) Get() {
 		this.TplNames = "page.tpl"
 	} else if len(urls) == 3 {
 		if urls[2] == "category" {
+			this.Data["Title"] = urls[1]
+			this.Data["Page"] = models.PageGet(urls[1])
+
 			this.TplNames = "category.tpl"
 		} else {
 			this.Abort("403")

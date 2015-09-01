@@ -7,17 +7,28 @@ import (
 	"strings"
 )
 
+const PERMISSION_EDIT = 1
+const PERMISSION_EDIT_SCRIPT = 2
+
 type EditController struct {
 	beego.Controller
-	uid int
+	uid        int
+	permission int
 }
 
 func (this *EditController) Prepare() {
 	uid := this.GetSession("uid")
-	if uid == nil {
+	perm := this.GetSession("permission")
+	if uid == nil || perm == nil {
 		this.Abort("403")
 	} else {
 		this.uid = uid.(int)
+		this.permission = perm.(int)
+
+		if this.permission&PERMISSION_EDIT == 0 {
+			this.Abort("403")
+		}
+
 		if this.uid == 0 {
 			this.Abort("403")
 		}
@@ -55,6 +66,7 @@ func (this *EditController) Post() {
 
 	if err != nil {
 		this.Abort("500")
+		return
 	}
 
 	url = strings.Trim(url, "/")
@@ -63,13 +75,27 @@ func (this *EditController) Post() {
 	if len(urls) == 2 {
 		content := this.GetString("content")
 
-		if models.PageEdit(urls[1], content, this.uid) {
+		script := false
+		enableScript := this.GetString("EnableScript")
+		if enableScript == "on" {
+			script = true
+		}
+
+		if this.permission&PERMISSION_EDIT_SCRIPT == 0 {
+			this.Abort("403")
+			return
+		}
+
+		if models.PageEdit(urls[1], content, this.uid, !script) {
 			this.Ctx.Redirect(302, "/page/"+urls[1])
+			return
 		} else {
 			this.TplNames = "editFail.tpl"
+			return
 		}
 
 	} else {
 		this.Abort("403")
+		return
 	}
 }
