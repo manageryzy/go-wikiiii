@@ -43,21 +43,26 @@ func PageGet(title string) (res template.HTML) {
 
 //强制渲染一个页面
 func PageRender(title string) (res string) {
-	page, exist := PageGetSQL(title)
+	page, exist, safe := PageGetSQL(title)
 
 	if !exist {
 		res = "本页面没有内容，点击<a href=\"/edit/" + title + "\">此处</a>编辑"
 		return
 	}
 
-	res = page
+	page = PageRenderString(page, safe)
+	res = pageRefreshCategory(page, title)
 	return
 }
 
-func PageRenderString(page string) (res string) {
+func PageRenderString(page string, safe bool) (res string) {
 	page = pageRenderInclude(page, 0)
 	page = pageRenderLinks(page)
 	page = pageRenderMarkdown(page)
+
+	if safe {
+		page = string(bluemonday.UGCPolicy().SanitizeBytes([]byte(page)))
+	}
 
 	res = page
 
@@ -76,7 +81,7 @@ func CategoryGetPages(cat string) []orm.Params {
 	return maps
 }
 
-func PageGetSQL(title string) (res string, exist bool) {
+func PageGetSQL(title string) (res string, exist bool, safe bool) {
 	p := Page{Title: title}
 	err := O.Read(&p)
 
@@ -84,6 +89,12 @@ func PageGetSQL(title string) (res string, exist bool) {
 		exist = false
 		res = ""
 		return
+	}
+
+	if p.Safe == 0 {
+		safe = false
+	} else {
+		safe = true
 	}
 
 	exist = true
@@ -104,7 +115,7 @@ func pageRenderInclude(content string, layers int) (res string) {
 	for _, include := range includes {
 		title := strings.Trim(include, "{} ")
 
-		subPage, exist := PageGetSQL(title)
+		subPage, exist, _ := PageGetSQL(title)
 		if exist {
 			r := strings.NewReplacer(include, pageRenderInclude(subPage, layers+1))
 			content = r.Replace(content)
@@ -140,23 +151,12 @@ func pageRenderLinks(content string) (res string) {
 	return
 }
 
-//更新页面
-func PageEdit(title string, content string, uid int, safe bool, fileName string) (res bool) {
-	pageCacheRemove(title)
-
-	if safe {
-		content = string(bluemonday.UGCPolicy().SanitizeBytes([]byte(content)))
-	}
-
-	err := ioutil.WriteFile(fileName, []byte(content), 0644)
-	if err != nil {
-		println(err.Error())
-		return false
-	}
+func pageRefreshCategory(content string, title string) (res string) {
+	content = pageRenderInclude(content, 0)
 
 	O.QueryTable("categories").Filter("title", title).Delete()
 
-	re := regexp.MustCompile("\\[`\\[.*\\]`\\]")
+	re := regexp.MustCompile("\\[{.*}\\]")
 	cats := re.FindAllString(content, -1)
 	for _, include := range cats {
 		category := strings.Trim(include, "[`] ")
@@ -168,9 +168,28 @@ func PageEdit(title string, content string, uid int, safe bool, fileName string)
 		content = r.Replace(content)
 	}
 
-	content = PageRenderString(content)
+	res = content
+	return
+}
+
+//更新页面
+func PageEdit(title string, content string, uid int, safe bool, fileName string) (res bool) {
+	pageCacheRemove(title)
+
+	err := ioutil.WriteFile(fileName, []byte(content), 0644)
+	if err != nil {
+		println(err.Error())
+		return false
+	}
+
+	pageRefreshCategory(content, title)
 
 	p := Page{Title: title, Page: content, Uid: uid}
+	if safe {
+		p.Safe = 1
+	} else {
+		p.Safe = 0
+	}
 	num, err := O.Update(&p)
 
 	if err != nil {

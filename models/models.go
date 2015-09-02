@@ -22,6 +22,7 @@ type Page struct {
 	Page     string `orm:"type(text)"`
 	Uid      int
 	Lastedit time.Time `orm:"auto_now;index;type(datetime)"`
+	Safe     int
 }
 
 type File struct {
