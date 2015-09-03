@@ -173,7 +173,7 @@ func pageRefreshCategory(content string, title string) (res string) {
 }
 
 //更新页面
-func PageEdit(title string, content string, uid int, safe bool, fileName string) (res bool) {
+func PageEdit(title string, content string, uid int, safe bool, fileName string, reason string) (res bool) {
 	pageCacheRemove(title)
 
 	err := ioutil.WriteFile(fileName, []byte(content), 0644)
@@ -204,7 +204,7 @@ func PageEdit(title string, content string, uid int, safe bool, fileName string)
 		}
 	}
 
-	h := History{Title: title, Path: fileName, Uid: uid}
+	h := History{Title: title, Path: fileName, Uid: uid, Reason: reason}
 	O.Insert(&h)
 
 	return true

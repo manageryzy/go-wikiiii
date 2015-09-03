@@ -91,6 +91,7 @@ func (this *EditController) Post() {
 
 	if len(urls) == 2 {
 		content := this.GetString("content")
+		reason := this.GetString("reason")
 
 		script := false
 		enableScript := this.GetString("EnableScript")
@@ -111,7 +112,7 @@ func (this *EditController) Post() {
 		filePath := dir + string(strconv.FormatInt(time.Now().Unix(), 10)) + ".md"
 		os.MkdirAll(dir, 0777)
 
-		if models.PageEdit(urls[1], content, this.uid, !script, filePath) {
+		if models.PageEdit(urls[1], content, this.uid, !script, filePath, reason) {
 			this.Ctx.Redirect(302, "/page/"+urls[1])
 			return
 		} else {

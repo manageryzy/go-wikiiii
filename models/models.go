@@ -35,6 +35,7 @@ type History struct {
 	Hid    int       `orm:"pk"`
 	Title  string    `orm:"index"`
 	Path   string    `orm:"type(text)"`
+	Reason string    `orm:"type(text)"`
 	Uid    int       `orm:"index"`
 	Update time.Time `orm:"auto_now;index;type(datetime)"`
 }

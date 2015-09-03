@@ -4,7 +4,7 @@
 {{template "head.tpl" .}}
 <body>
     {{template "header.tpl" .}}
-    <h1>index</h1>
+    <h1>history of {{.Title}}</h1>
     {{template "feet.tpl" .}}
 </body>
 </html>
