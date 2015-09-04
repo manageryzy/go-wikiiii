@@ -174,9 +174,15 @@ func pageRefreshCategory(content string, title string) (res string) {
 
 //更新页面
 func PageEdit(title string, content string, uid int, safe bool, fileName string, reason string) (res bool) {
+	user := User{Uid: uid}
+	err := O.Read(&user)
+	if err != nil {
+		return false
+	}
+
 	pageCacheRemove(title)
 
-	err := ioutil.WriteFile(fileName, []byte(content), 0644)
+	err = ioutil.WriteFile(fileName, []byte(content), 0644)
 	if err != nil {
 		println(err.Error())
 		return false
@@ -204,7 +210,7 @@ func PageEdit(title string, content string, uid int, safe bool, fileName string,
 		}
 	}
 
-	h := History{Title: title, Path: fileName, Uid: uid, Reason: reason}
+	h := History{Title: title, Path: fileName, Uid: uid, Reason: reason, Name: user.Name}
 	O.Insert(&h)
 
 	return true

@@ -2,8 +2,12 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 	"github.com/manageryzy/go-wikiiii/models"
+	"html/template"
+	"io/ioutil"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -39,15 +43,39 @@ func (this *PageController) Get() {
 			this.TplNames = "category.tpl"
 		} else if urls[2] == "history" {
 			//历史列表
+			var maps []orm.Params
+			models.O.QueryTable("history").Filter("title", urls[1]).Values(&maps)
+			this.Data["Title"] = urls[1]
+			this.Data["History"] = maps
 			this.TplNames = "history.tpl"
 		} else {
 			this.Abort("403")
 		}
 	} else if len(urls) == 4 {
 		//历史页面
+		t := strings.Split(urls[3], "?")
+		hid, _ := strconv.Atoi(t[0])
+		history := models.History{Hid: hid}
+		e := models.O.Read(&history)
+		if e != nil {
+			println(e.Error())
+			this.Abort("500")
+		}
+		b, e := ioutil.ReadFile(history.Path)
+		if e != nil {
+			println(e.Error())
+			this.Abort("500")
+		}
+		src := string(b)
+
+		if len(t) == 2 && t[1] == "src" {
+			this.Data["Page"] = template.HTML("<pre>" + src + "</pre>")
+		} else {
+			this.Data["Page"] = template.HTML(models.PageRenderString(src, false))
+		}
+
 		this.Data["Title"] = urls[1] + " history "
-		this.Data["Page"] = models.PageGet(urls[1])
-		this.Data["Category"] = models.PageGetCategory(urls[1])
+		this.Data["Category"] = nil
 		this.TplNames = "page.tpl"
 	} else {
 		this.Abort("403")
