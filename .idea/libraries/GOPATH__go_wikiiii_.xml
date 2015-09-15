@@ -24,6 +24,7 @@
       <root url="file://$PROJECT_DIR$/../../lib/pq/.git" />
       <root url="file://$PROJECT_DIR$/../../ogier/pflag/.git" />
       <root url="file://$PROJECT_DIR$/../../russross/blackfriday-tool/.git" />
+      <root url="file://$PROJECT_DIR$/../../../code.google.com/p/go.net/.hg" />
       <root url="file://$PROJECT_DIR$/../../PuerkitoBio/goquery/testdata" />
       <root url="file://$PROJECT_DIR$/../../jtolds/gls/.git" />
       <root url="file://$PROJECT_DIR$/../../microcosm-cc/bluemonday/.git" />
@@ -33,6 +34,8 @@
       <root url="file://$PROJECT_DIR$/../../renstrom/go-wiki/.git" />
       <root url="file://$PROJECT_DIR$/.idea" />
       <root url="file://$PROJECT_DIR$/../../PuerkitoBio/goquery/.git" />
+      <root url="file://$PROJECT_DIR$/../../../code.google.com/p/ftp4go/.hg" />
+      <root url="file://$PROJECT_DIR$/../../../code.google.com/p/go.net/html/charset/testdata" />
       <root url="file://$PROJECT_DIR$/../../smartystreets/assertions/.git" />
       <root url="file://$PROJECT_DIR$/../../beego/bee/testdata" />
       <root url="file://$PROJECT_DIR$/../../../code.google.com/p/cascadia/.hg" />
@@ -47,6 +50,7 @@
       <root url="file://$PROJECT_DIR$/../../sourcegraph/annotate/.git" />
       <root url="file://$PROJECT_DIR$/../../sourcegraph/annotate/testdata" />
       <root url="file://$PROJECT_DIR$/../../favframework/debug/.git" />
+      <root url="file://$PROJECT_DIR$/../../../code.google.com/p/go.net/html/testdata" />
     </excluded>
   </library>
 </component>

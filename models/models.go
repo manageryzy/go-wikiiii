@@ -29,6 +29,8 @@ type File struct {
 	FileName string `orm:"pk;index"`
 	Path     string `orm:"type(text)"`
 	Url      string `orm:"type(text)"`
+	Uid      int
+	Cdn      int
 }
 
 type History struct {

@@ -14,9 +14,6 @@ import (
 	"time"
 )
 
-const PERMISSION_EDIT = 1
-const PERMISSION_EDIT_SCRIPT = 2
-
 type EditController struct {
 	beego.Controller
 	uid        int
@@ -116,7 +113,7 @@ func (this *EditController) Post() {
 			this.Ctx.Redirect(302, "/page/"+urls[1])
 			return
 		} else {
-			this.TplNames = "editFail.tpl"
+			this.TplNames = "err.tpl"
 			return
 		}
 

@@ -22,6 +22,8 @@ func main() {
 	var err error
 	models.PageCache, err = cache.NewCache("memory", `{"interval":60}`)
 
+	models.CDNInit()
+
 	if err != nil {
 		println(err.Error())
 		return
