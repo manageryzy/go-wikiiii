@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"github.com/astaxie/beego"
 	"github.com/manageryzy/go-wikiiii/models"
+	"io/ioutil"
 	"net/url"
 	"os"
 	"strconv"
@@ -118,9 +119,27 @@ func (this *UploadController) Post() {
 			this.Abort("403")
 		}
 
+		//确定临时文件文件名
 		h := md5.New()
 		h.Write([]byte(fileName))
 		Md5 := hex.EncodeToString(h.Sum(nil))
+
+		//保存临时文件
+		tmpFileName := "/tmp/" + Md5
+		err = this.SaveToFile("file", tmpFileName)
+		if err != nil {
+			this.Abort("500")
+		}
+
+		//读取临时文件并且计算md5
+		content, err := ioutil.ReadFile(tmpFileName)
+		if err != nil {
+			this.Data["error"] = "写入临时文件失败"
+			this.TplNames = "err.tpl"
+		}
+		h.Reset()
+		h.Write(content)
+		Md5 = hex.EncodeToString(h.Sum(nil))
 
 		dir := "./uploads/" + strconv.Itoa(this.uid) + "/"
 		filePath := dir + Md5 + "." + ext
@@ -133,8 +152,11 @@ func (this *UploadController) Post() {
 
 		url := models.CDNGetURL("/" + strconv.Itoa(this.uid) + "/" + Md5 + "." + ext)
 
-		history := models.HistoryFile{FileName: this.GetString("name"), Path: filePath, Url: url, Uid: this.uid}
-		models.O.Insert(&history)
+		user := models.User{Uid: this.uid}
+		err = models.O.Read(&user)
+		if err != nil {
+			this.Abort("403")
+		}
 
 		file.Path = filePath
 		file.Url = url
@@ -148,10 +170,14 @@ func (this *UploadController) Post() {
 
 		if models.CDNUploadFile(filePath, "/"+strconv.Itoa(this.uid)+"/"+Md5+"."+ext) {
 			file.Cdn = 1
+			history := models.HistoryFile{FileName: this.GetString("name"), Path: filePath, Url: url, Uid: this.uid, Cdn: 1, Name: user.Name}
+			models.O.Insert(&history)
 			models.O.Update(&file)
 			this.Ctx.Redirect(302, "/upload")
 			return
 		} else {
+			history := models.HistoryFile{FileName: this.GetString("name"), Path: filePath, Url: url, Uid: this.uid, Cdn: 0, Name: user.Name}
+			models.O.Insert(&history)
 			this.TplNames = "err.tpl"
 			return
 		}

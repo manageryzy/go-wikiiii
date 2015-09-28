@@ -49,7 +49,9 @@ type HistoryFile struct {
 	Path     string `orm:"type(text)"`
 	Url      string `orm:"type(text)"`
 	Uid      int
+	Name     string
 	Update   time.Time `orm:"auto_now;index;type(datetime)"`
+	Cdn      int
 }
 
 var O orm.Ormer
