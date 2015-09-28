@@ -2,4 +2,4 @@
 *.memprof
 *.pprof
 /data/*
-
+/uploads/*

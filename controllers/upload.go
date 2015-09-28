@@ -84,15 +84,19 @@ func (this *UploadController) Post() {
 		}
 
 		//检查是否已经存在
+		fileExist := false
 		file := models.File{FileName: this.GetString("name")}
 		err := models.O.Read(&file)
 		if err == nil {
-			this.Data["ERROR"] = "文件重复上传，请先删除"
-			this.TplNames = "err.tpl"
-			return
+			fileExist = true
 		}
 
 		_, header, err := this.GetFile("file")
+		if err != nil {
+			this.Data["ERROR"] = err.Error()
+			this.TplNames = "err.tpl"
+			return
+		}
 
 		fileName := header.Filename
 
@@ -129,11 +133,18 @@ func (this *UploadController) Post() {
 
 		url := models.CDNGetURL("/" + strconv.Itoa(this.uid) + "/" + Md5 + "." + ext)
 
+		history := models.HistoryFile{FileName: this.GetString("name"), Path: filePath, Url: url, Uid: this.uid}
+		models.O.Insert(&history)
+
 		file.Path = filePath
 		file.Url = url
 		file.Uid = this.uid
 		file.Cdn = 0
-		models.O.Insert(&file)
+		if !fileExist {
+			models.O.Insert(&file)
+		} else {
+			models.O.Update(&file)
+		}
 
 		if models.CDNUploadFile(filePath, "/"+strconv.Itoa(this.uid)+"/"+Md5+"."+ext) {
 			file.Cdn = 1

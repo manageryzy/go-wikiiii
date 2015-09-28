@@ -43,9 +43,18 @@ type History struct {
 	Update time.Time `orm:"auto_now;index;type(datetime)"`
 }
 
+type HistoryFile struct {
+	Fhid     int    `orm:"pk"`
+	FileName string `orm:"index"`
+	Path     string `orm:"type(text)"`
+	Url      string `orm:"type(text)"`
+	Uid      int
+	Update   time.Time `orm:"auto_now;index;type(datetime)"`
+}
+
 var O orm.Ormer
 
 func init() {
 	// 需要在init中注册定义的model
-	orm.RegisterModel(new(User), new(Page), new(Categories), new(File), new(History))
+	orm.RegisterModel(new(User), new(Page), new(Categories), new(File), new(History), new(HistoryFile))
 }
