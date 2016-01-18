@@ -7,6 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/manageryzy/go-wikiiii/models"
 	_ "github.com/manageryzy/go-wikiiii/routers"
+	"github.com/manageryzy/go-wikiiii/controllers"
 )
 
 func init() {
@@ -29,5 +30,9 @@ func main() {
 		return
 	}
 
+
+	beego.ErrorController(&controllers.Error{});
 	beego.Run()
 }
+
+
