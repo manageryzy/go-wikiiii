@@ -3,3 +3,4 @@
 *.pprof
 /data/*
 /uploads/*
+.idea/*
