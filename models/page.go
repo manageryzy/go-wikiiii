@@ -13,15 +13,21 @@ import (
 const MaxIncludeLayers = 5
 
 const markdownExtensions = 0 |
-	blackfriday.EXTENSION_NO_INTRA_EMPHASIS |
-	blackfriday.EXTENSION_TABLES |
-	blackfriday.EXTENSION_FENCED_CODE |
-	blackfriday.EXTENSION_AUTOLINK |
-	blackfriday.EXTENSION_STRIKETHROUGH |
-	blackfriday.EXTENSION_SPACE_HEADERS |
-	blackfriday.EXTENSION_HEADER_IDS |
-	blackfriday.EXTENSION_BACKSLASH_LINE_BREAK |
-	blackfriday.EXTENSION_DEFINITION_LISTS
+blackfriday.EXTENSION_NO_INTRA_EMPHASIS         			 |// ignore emphasis markers inside words
+blackfriday.EXTENSION_TABLES                                 |// render tables
+blackfriday.EXTENSION_FENCED_CODE                            |// render fenced code blocks
+blackfriday.EXTENSION_AUTOLINK                               |// detect embedded URLs that are not explicitly marked
+blackfriday.EXTENSION_STRIKETHROUGH                          |// strikethrough text using ~~test~~
+blackfriday.EXTENSION_LAX_HTML_BLOCKS                        |// loosen up HTML block parsing rules
+blackfriday.EXTENSION_SPACE_HEADERS                          |// be strict about prefix header rules
+blackfriday.EXTENSION_HARD_LINE_BREAK                        |// translate newlines into line breaks
+blackfriday.EXTENSION_TAB_SIZE_EIGHT                         |// expand tabs to eight spaces instead of four
+blackfriday.EXTENSION_FOOTNOTES                              |// Pandoc-style footnotes
+blackfriday.EXTENSION_HEADER_IDS                             |// specify header IDs  with {#id}
+blackfriday.EXTENSION_TITLEBLOCK                             |// Titleblock ala pandoc
+blackfriday.EXTENSION_AUTO_HEADER_IDS                        |// Create the header ID from the text
+blackfriday.EXTENSION_BACKSLASH_LINE_BREAK                   |// translate trailing backslashes into line breaks
+blackfriday.EXTENSION_DEFINITION_LISTS                       // render definition lists
 
 const htmlFlags = 0 |
 	blackfriday.HTML_USE_XHTML |

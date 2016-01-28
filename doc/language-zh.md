@@ -48,28 +48,51 @@ Alice   | 23
 
 原来引用一段代码是通过三个引号包含完成的
 
-```
-\`\`\`
-func getTrue() bool {
-    return true
-}
-\`\`\`
-```
+	``` 
+	func getTrue() bool {
+	    return true
+	}
+	```
 
 现在可以指定语言了
 
-```
-\`\`\` go
-func getTrue() bool {
-    return true
-}
-\`\`\`
-```
+	``` go
+	func getTrue() bool {
+	    return true
+	}
+	```
 
 #### 脚注 ####
 
-```
-This is a footnote.[^1]
 
-[^1]: the footnote text.
-```
+	This is a footnote.[^1]
+	
+	[^1]: the footnote text.
+
+#### 自动分数 ####
+
+输入4/5的话会自动以分数的形式显示
+
+#### 其他杂项 
+
+参考 https://github.com/russross/blackfriday
+
+
+#### 页面链接 ####
+
+使用 `[[页面]]` 来创建到某个页面的链接
+
+使用 `[[@页面]]` 来生成完整超链接地址
+
+使用 `[[file:文件名]]` 来根据类型插入文件
+
+使用 `[[@file:文件名]]` 来插入文件地址
+
+#### 类别 ####
+
+使用 `[{类别}}` 来把页面归属到某个分类下面
+
+#### 模板包含 ####
+
+使用`{{模板名|参数1:参数|参数2:参数}}` 来包含一个模板
+
