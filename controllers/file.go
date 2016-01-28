@@ -19,7 +19,7 @@ func (this *FileController) Prepare() {
 	uid := this.GetSession("uid")
 	perm := this.GetSession("permission")
 	if uid == nil || perm == nil {
-		//		this.Abort("403")
+		this.Abort("403")
 	} else {
 		this.uid = uid.(int)
 		this.permission = perm.(int)
