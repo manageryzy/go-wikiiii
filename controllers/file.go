@@ -19,7 +19,8 @@ func (this *FileController) Prepare() {
 	uid := this.GetSession("uid")
 	perm := this.GetSession("permission")
 	if uid == nil || perm == nil {
-		this.Abort("403")
+		this.uid = 0
+		this.permission = 0
 	} else {
 		this.uid = uid.(int)
 		this.permission = perm.(int)
@@ -37,13 +38,13 @@ func (this *FileController) Get() {
 	urls := strings.Split(url, "/")
 
 	if len(urls) < 2 {
-		this.Abort("403")
+		this.Abort("404")
 	}
 
 	switch urls[1] {
 	case "get":
 		if len(urls) != 3 {
-			this.Abort("403")
+			this.Abort("404")
 		}
 
 		file := models.File{FileName: urls[2]}
@@ -73,6 +74,10 @@ func (this *FileController) Get() {
 
 			name := this.GetString("name", "")
 			if name == "" {
+				if this.uid == 0 {
+					this.Abort("403")
+				}
+
 				if this.permission&PERMISSION_VIEW_UPLOAD != 0 {
 					models.O.QueryTable("history_file").OrderBy("update").Limit(50).Values(&maps)
 				} else {
@@ -144,10 +149,10 @@ func (this *FileController) Get() {
 			f := models.File{Uid: file.Uid, FileName: file.FileName, Path: file.Path, Url: file.Url, Cdn: file.Cdn}
 			models.O.Update(&f)
 		default:
-			this.Abort("403")
+			this.Abort("404")
 		}
 	case "delete":
 	default:
-		this.Abort("403")
+		//this.CustomAbort(404,"404")
 	}
 }
