@@ -16,7 +16,7 @@ type PageController struct {
 }
 
 func (this *PageController) Get() {
-	url, err := url.QueryUnescape(this.Ctx.Input.Request.URL.String())
+	url, err := url.QueryUnescape(this.Ctx.Input.URL())
 
 	if err != nil {
 		this.Abort("500")
@@ -32,7 +32,7 @@ func (this *PageController) Get() {
 		this.Data["Title"] = urls[1]
 		this.Data["Page"] = models.PageGet(urls[1])
 		this.Data["Category"] = models.PageGetCategory(urls[1])
-		this.TplNames = "page.tpl"
+		this.TplName = "page.tpl"
 	} else if len(urls) == 3 {
 		if urls[2] == "category" {
 			//分类目录
@@ -40,14 +40,14 @@ func (this *PageController) Get() {
 			this.Data["Page"] = models.PageGet(urls[1])
 			this.Data["Category"] = models.PageGetCategory(urls[1])
 			this.Data["Pages"] = models.CategoryGetPages(urls[1])
-			this.TplNames = "category.tpl"
+			this.TplName = "category.tpl"
 		} else if urls[2] == "history" {
 			//历史列表
 			var maps []orm.Params
 			models.O.QueryTable("history").Filter("title", urls[1]).Values(&maps)
 			this.Data["Title"] = urls[1]
 			this.Data["History"] = maps
-			this.TplNames = "history.tpl"
+			this.TplName = "history.tpl"
 		} else {
 			this.Abort("403")
 		}
@@ -76,7 +76,7 @@ func (this *PageController) Get() {
 
 		this.Data["Title"] = urls[1] + " history "
 		this.Data["Category"] = nil
-		this.TplNames = "page.tpl"
+		this.TplName = "page.tpl"
 	} else {
 		this.Abort("403")
 	}

@@ -28,7 +28,7 @@ func (this *FileController) Prepare() {
 }
 
 func (this *FileController) Get() {
-	url, err := url.QueryUnescape(this.Ctx.Input.Request.URL.String())
+	url, err := url.QueryUnescape(this.Ctx.Input.URL())
 
 	if err != nil {
 		this.Abort("500")
@@ -64,7 +64,7 @@ func (this *FileController) Get() {
 	case "history":
 		if len(urls) < 3 {
 			this.Data["ERROR"] = "参数错误"
-			this.TplNames = "err.tpl"
+			this.TplName = "err.tpl"
 			return
 		}
 
@@ -92,12 +92,12 @@ func (this *FileController) Get() {
 			}
 
 			this.Data["History"] = maps
-			this.TplNames = "history_file.tpl"
+			this.TplName = "history_file.tpl"
 
 		case "get": //获得旧版文件
 			if len(urls) < 4 {
 				this.Data["ERROR"] = "参数错误"
-				this.TplNames = "err.tpl"
+				this.TplName = "err.tpl"
 				return
 			}
 
@@ -119,7 +119,7 @@ func (this *FileController) Get() {
 		case "view": //旧版文件信息
 			if len(urls) < 4 {
 				this.Data["ERROR"] = "参数错误"
-				this.TplNames = "err.tpl"
+				this.TplName = "err.tpl"
 				return
 			}
 
@@ -132,7 +132,7 @@ func (this *FileController) Get() {
 		case "use": //使用旧版文件代替新版文件
 			if len(urls) < 4 {
 				this.Data["ERROR"] = "参数错误"
-				this.TplNames = "err.tpl"
+				this.TplName = "err.tpl"
 				return
 			}
 			fhid, _ := strconv.Atoi(urls[3])
@@ -153,6 +153,6 @@ func (this *FileController) Get() {
 		}
 	case "delete":
 	default:
-		//this.CustomAbort(404,"404")
+		this.CustomAbort(404,"404")
 	}
 }

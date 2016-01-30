@@ -13,5 +13,5 @@ func (this *LoginController) Get() {
 
 	this.SetSession("uid", 1)
 	this.SetSession("permission", PERMISSION_EDIT|PERMISSION_EDIT_SCRIPT|PERMISSION_UPLOAD|PERMISSION_VIEW_UPLOAD|PERMISSION_EDIT_UPLOAD)
-	this.TplNames = "login.tpl"
+	this.TplName = "login.tpl"
 }

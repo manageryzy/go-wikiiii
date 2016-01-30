@@ -40,7 +40,7 @@ func (this *EditController) Prepare() {
 }
 
 func (this *EditController) Get() {
-	url, err := url.QueryUnescape(this.Ctx.Input.Request.URL.String())
+	url, err := url.QueryUnescape(this.Ctx.Input.URL())
 
 	if err != nil {
 		this.Abort("500")
@@ -69,14 +69,14 @@ func (this *EditController) Get() {
 
 		this.Data["Title"] = urls[1]
 
-		this.TplNames = "edit.tpl"
+		this.TplName = "edit.tpl"
 	} else {
 		this.Abort("403")
 	}
 }
 
 func (this *EditController) Post() {
-	url, err := url.QueryUnescape(this.Ctx.Input.Request.URL.String())
+	url, err := url.QueryUnescape(this.Ctx.Input.URL())
 
 	if err != nil {
 		this.Abort("500")
@@ -113,7 +113,7 @@ func (this *EditController) Post() {
 			this.Ctx.Redirect(302, "/page/"+urls[1])
 			return
 		} else {
-			this.TplNames = "err.tpl"
+			this.TplName = "err.tpl"
 			return
 		}
 

@@ -8,13 +8,13 @@ type Error struct {
 }
 
 func (this *Error) Error403()  {
-	this.TplNames = "403.tpl"
+	this.TplName = "403.tpl"
 }
 
 func (this *Error) Error404()  {
-	this.TplNames = "404.tpl"
+	this.TplName = "404.tpl"
 }
 
 func (this *Error) Error500()  {
-	this.TplNames = "500.tpl"
+	this.TplName = "500.tpl"
 }

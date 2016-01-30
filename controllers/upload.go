@@ -47,7 +47,7 @@ func (this *UploadController) Prepare() {
 }
 
 func (this *UploadController) Get() {
-	url, err := url.QueryUnescape(this.Ctx.Input.Request.URL.String())
+	url, err := url.QueryUnescape(this.Ctx.Input.URL())
 
 	if err != nil {
 		this.Abort("500")
@@ -60,14 +60,14 @@ func (this *UploadController) Get() {
 
 		this.Data["Title"] = "file upload"
 
-		this.TplNames = "upload.tpl"
+		this.TplName = "upload.tpl"
 	} else {
 		this.Abort("403")
 	}
 }
 
 func (this *UploadController) Post() {
-	url, err := url.QueryUnescape(this.Ctx.Input.Request.URL.String())
+	url, err := url.QueryUnescape(this.Ctx.Input.URL())
 
 	if err != nil {
 		this.Abort("500")
@@ -95,7 +95,7 @@ func (this *UploadController) Post() {
 		_, header, err := this.GetFile("file")
 		if err != nil {
 			this.Data["ERROR"] = err.Error()
-			this.TplNames = "err.tpl"
+			this.TplName = "err.tpl"
 			return
 		}
 
@@ -135,7 +135,7 @@ func (this *UploadController) Post() {
 		content, err := ioutil.ReadFile(tmpFileName)
 		if err != nil {
 			this.Data["error"] = "写入临时文件失败"
-			this.TplNames = "err.tpl"
+			this.TplName = "err.tpl"
 		}
 		h.Reset()
 		h.Write(content)
@@ -178,7 +178,7 @@ func (this *UploadController) Post() {
 		} else {
 			history := models.HistoryFile{FileName: this.GetString("name"), Path: filePath, Url: url, Uid: this.uid, Cdn: 0, Name: user.Name}
 			models.O.Insert(&history)
-			this.TplNames = "err.tpl"
+			this.TplName = "err.tpl"
 			return
 		}
 

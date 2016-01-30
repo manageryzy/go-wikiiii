@@ -11,5 +11,5 @@ type CategoryController struct {
 func (this *CategoryController) Get() {
 	//this.Data["Website"] = "beego.me"
 	//this.Data["Email"] = "astaxie@gmail.com"
-	this.TplNames = "category.tpl"
+	this.TplName = "category.tpl"
 }
