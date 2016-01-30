@@ -37,14 +37,11 @@ const htmlFlags = 0 |
 
 //获得一个页面
 func PageGet(title string) (res template.HTML) {
-	str := ""
-	if isCacheExist(title) {
-		str = PageCacheGet(title)
-	} else {
+	str,exist := PageCacheGet(title)
+	if !exist{
 		str = PageRender(title)
 		pageCacheAdd(title, str)
 	}
-	println(str)
 	res = template.HTML(str)
 	return
 }
