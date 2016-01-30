@@ -21,15 +21,13 @@ func main() {
 	models.O.Using("default") // 默认使用 default，你可以指定为其他数据库
 
 	var err error
-	models.PageCache, err = cache.NewCache("memory", `{"interval":60}`)
-
-	models.CDNInit()
-
+	models.PageCache, err = cache.NewCache("memory", `{"interval":3600}`)
 	if err != nil {
 		println(err.Error())
 		return
 	}
 
+	models.CDNInit()
 
 	beego.ErrorController(&controllers.Error{});
 	beego.Run()

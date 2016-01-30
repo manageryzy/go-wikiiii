@@ -37,14 +37,16 @@ const htmlFlags = 0 |
 
 //获得一个页面
 func PageGet(title string) (res template.HTML) {
+	str := ""
 	if isCacheExist(title) {
-		res = PageCacheGet(title)
-		return
+		str = PageCacheGet(title)
 	} else {
-		res = template.HTML(PageRender(title))
-		pageCacheAdd(title, res)
-		return
+		str = PageRender(title)
+		pageCacheAdd(title, str)
 	}
+	println(str)
+	res = template.HTML(str)
+	return
 }
 
 //强制渲染一个页面
@@ -150,7 +152,32 @@ func pageRenderLinks(content string) (res string) {
 	for _, include := range links {
 		title := strings.Trim(include, "[] ")
 
-		r := strings.NewReplacer(include, "<a href=\"/page/"+title+"\" >"+title+"</a>")
+		renderAsLink := false
+		if title[0] == '@'{
+			renderAsLink = true
+			title = title[1:]
+		}
+
+		isFile := false
+		if len(title)>5 && title[0:5] == "file:"{
+			isFile = true
+			title = title[5:]
+		}
+
+		var r * strings.Replacer
+		if renderAsLink{
+			if isFile{
+				r = strings.NewReplacer(include, "/file/get/"+title)
+			}else {
+				r = strings.NewReplacer(include, "/page/"+title)
+			}
+		}else {
+			if isFile{
+				r = strings.NewReplacer(include, "<a href=\"/file/get/"+title+"\" >"+title+"</a>")
+			}else {
+				r = strings.NewReplacer(include, "<a href=\"/page/"+title+"\" >"+title+"</a>")
+			}
+		}
 		content = r.Replace(content)
 	}
 	res = content
