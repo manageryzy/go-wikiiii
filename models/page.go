@@ -182,6 +182,8 @@ func pageRenderLinks(content string) (res string) {
 }
 
 func pageRefreshCategory(content string, title string) (res string) {
+	c := make(map[string]bool)
+
 	content = pageRenderInclude(content, 0)
 
 	O.QueryTable("categories").Filter("title", title).Delete()
@@ -190,12 +192,15 @@ func pageRefreshCategory(content string, title string) (res string) {
 	cats := re.FindAllString(content, -1)
 	for _, include := range cats {
 		category := strings.Trim(include, "[`] ")
-
-		cat := Categories{Title: title, Category: category}
-		O.Insert(&cat)
+		c[category] = true
 
 		r := strings.NewReplacer(include, "")
 		content = r.Replace(content)
+	}
+
+	for k,_ := range c{
+		cat := Categories{Title: title, Category: k}
+		O.Insert(&cat)
 	}
 
 	res = content
