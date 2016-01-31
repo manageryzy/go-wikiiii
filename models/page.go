@@ -13,21 +13,21 @@ import (
 const MaxIncludeLayers = 5
 
 const markdownExtensions = 0 |
-blackfriday.EXTENSION_NO_INTRA_EMPHASIS         			 |// ignore emphasis markers inside words
-blackfriday.EXTENSION_TABLES                                 |// render tables
-blackfriday.EXTENSION_FENCED_CODE                            |// render fenced code blocks
-blackfriday.EXTENSION_AUTOLINK                               |// detect embedded URLs that are not explicitly marked
-blackfriday.EXTENSION_STRIKETHROUGH                          |// strikethrough text using ~~test~~
-blackfriday.EXTENSION_LAX_HTML_BLOCKS                        |// loosen up HTML block parsing rules
-blackfriday.EXTENSION_SPACE_HEADERS                          |// be strict about prefix header rules
-blackfriday.EXTENSION_HARD_LINE_BREAK                        |// translate newlines into line breaks
-blackfriday.EXTENSION_TAB_SIZE_EIGHT                         |// expand tabs to eight spaces instead of four
-blackfriday.EXTENSION_FOOTNOTES                              |// Pandoc-style footnotes
-blackfriday.EXTENSION_HEADER_IDS                             |// specify header IDs  with {#id}
-blackfriday.EXTENSION_TITLEBLOCK                             |// Titleblock ala pandoc
-blackfriday.EXTENSION_AUTO_HEADER_IDS                        |// Create the header ID from the text
-blackfriday.EXTENSION_BACKSLASH_LINE_BREAK                   |// translate trailing backslashes into line breaks
-blackfriday.EXTENSION_DEFINITION_LISTS                       // render definition lists
+	blackfriday.EXTENSION_NO_INTRA_EMPHASIS | // ignore emphasis markers inside words
+	blackfriday.EXTENSION_TABLES | // render tables
+	blackfriday.EXTENSION_FENCED_CODE | // render fenced code blocks
+	blackfriday.EXTENSION_AUTOLINK | // detect embedded URLs that are not explicitly marked
+	blackfriday.EXTENSION_STRIKETHROUGH | // strikethrough text using ~~test~~
+	blackfriday.EXTENSION_LAX_HTML_BLOCKS | // loosen up HTML block parsing rules
+	blackfriday.EXTENSION_SPACE_HEADERS | // be strict about prefix header rules
+	blackfriday.EXTENSION_HARD_LINE_BREAK | // translate newlines into line breaks
+	blackfriday.EXTENSION_TAB_SIZE_EIGHT | // expand tabs to eight spaces instead of four
+	blackfriday.EXTENSION_FOOTNOTES | // Pandoc-style footnotes
+	blackfriday.EXTENSION_HEADER_IDS | // specify header IDs  with {#id}
+	blackfriday.EXTENSION_TITLEBLOCK | // Titleblock ala pandoc
+	blackfriday.EXTENSION_AUTO_HEADER_IDS | // Create the header ID from the text
+	blackfriday.EXTENSION_BACKSLASH_LINE_BREAK | // translate trailing backslashes into line breaks
+	blackfriday.EXTENSION_DEFINITION_LISTS // render definition lists
 
 const htmlFlags = 0 |
 	blackfriday.HTML_USE_XHTML |
@@ -37,8 +37,8 @@ const htmlFlags = 0 |
 
 //获得一个页面
 func PageGet(title string) (res template.HTML) {
-	str,exist := PageCacheGet(title)
-	if !exist{
+	str, exist := PageCacheGet(title)
+	if !exist {
 		str = PageRender(title)
 		pageCacheAdd(title, str)
 	}
@@ -62,8 +62,8 @@ func PageRender(title string) (res string) {
 
 func PageRenderString(page string, safe bool) (res string) {
 	param := make(map[string]string)
-	page = pageRenderInclude(page, 0,&param)
-	page = pageRenderParam(page,&param)
+	page = pageRenderInclude(page, 0, &param)
+	page = pageRenderParam(page, &param)
 	page = pageRenderLinks(page)
 	page = pageRenderMarkdown(page)
 
@@ -110,7 +110,7 @@ func PageGetSQL(title string) (res string, exist bool, safe bool) {
 	return
 }
 
-func pageRenderInclude(content string, layers int,param * map[string]string) (res string) {
+func pageRenderInclude(content string, layers int, param *map[string]string) (res string) {
 	if layers > MaxIncludeLayers {
 		res = "<pre>Error: Too much layers included!!!</pre>"
 		return
@@ -121,17 +121,17 @@ func pageRenderInclude(content string, layers int,param * map[string]string) (re
 
 	for _, include := range includes {
 		title := strings.Trim(include, "{} ")
-		titles := strings.Split(title,"|")
+		titles := strings.Split(title, "|")
 		title = titles[0]
-		for k,v := range titles{
+		for k, v := range titles {
 			if k != 0 {
-				p := strings.Split(v,":")
-				if len(p) == 2{
-					x := strings.Trim(p[0]," ")
-					y := strings.Trim(p[1]," ")
+				p := strings.Split(v, ":")
+				if len(p) == 2 {
+					x := strings.Trim(p[0], " ")
+					y := strings.Trim(p[1], " ")
 
 					(*param)[x] = y
-				}else {
+				} else {
 					//Error
 				}
 			}
@@ -139,7 +139,7 @@ func pageRenderInclude(content string, layers int,param * map[string]string) (re
 
 		subPage, exist, _ := PageGetSQL(title)
 		if exist {
-			r := strings.NewReplacer(include, pageRenderInclude(subPage, layers+1,param))
+			r := strings.NewReplacer(include, pageRenderInclude(subPage, layers+1, param))
 			content = r.Replace(content)
 		} else {
 			r := strings.NewReplacer(include, "<pre>Error: Include page not found!</pre>")
@@ -151,17 +151,17 @@ func pageRenderInclude(content string, layers int,param * map[string]string) (re
 	return
 }
 
-func pageRenderParam(content string,param * map[string]string) (res string) {
+func pageRenderParam(content string, param *map[string]string) (res string) {
 	re := regexp.MustCompile("\\$\\$[\\w\\d]+")
 	ps := re.FindAllString(content, -1)
 
-	if len(ps)==0{
+	if len(ps) == 0 {
 		println("no match")
 	}
 
 	for _, p := range ps {
 		k := p[2:]
-		v,exist := (*param)[k]
+		v, exist := (*param)[k]
 		if exist == false {
 			continue
 		}
@@ -189,28 +189,28 @@ func pageRenderLinks(content string) (res string) {
 		title := strings.Trim(include, "[] ")
 
 		renderAsLink := false
-		if title[0] == '@'{
+		if title[0] == '@' {
 			renderAsLink = true
 			title = title[1:]
 		}
 
 		isFile := false
-		if len(title)>5 && title[0:5] == "file:"{
+		if len(title) > 5 && title[0:5] == "file:" {
 			isFile = true
 			title = title[5:]
 		}
 
-		var r * strings.Replacer
-		if renderAsLink{
-			if isFile{
+		var r *strings.Replacer
+		if renderAsLink {
+			if isFile {
 				r = strings.NewReplacer(include, "/file/get/"+title)
-			}else {
+			} else {
 				r = strings.NewReplacer(include, "/page/"+title)
 			}
-		}else {
-			if isFile{
+		} else {
+			if isFile {
 				r = strings.NewReplacer(include, "<a href=\"/file/get/"+title+"\" >"+title+"</a>")
-			}else {
+			} else {
 				r = strings.NewReplacer(include, "<a href=\"/page/"+title+"\" >"+title+"</a>")
 			}
 		}
@@ -221,25 +221,40 @@ func pageRenderLinks(content string) (res string) {
 }
 
 func pageRefreshCategory(content string, title string) (res string) {
-	c := make(map[string]bool)
+	c := make(map[string]int)
 	param := make(map[string]string)
-	content = pageRenderInclude(content, 0,&param)
+	content = pageRenderInclude(content, 0, &param)
 
-	O.QueryTable("categories").Filter("title", title).Delete()
+	var oldCategories []orm.Params
+	O.QueryTable("categories").Filter("title", title).Values(&oldCategories)
+
+	for _, v := range oldCategories {
+		cat := v["Category"].(string)
+		c[cat] = -1
+	}
 
 	re := regexp.MustCompile("\\[{.*}\\]")
 	cats := re.FindAllString(content, -1)
 	for _, include := range cats {
 		category := strings.Trim(include, "[`] ")
-		c[category] = true
+		_, exist := c[category]
+		if exist {
+			c[category] = 0
+		} else {
+			c[category] = 1
+		}
 
 		r := strings.NewReplacer(include, "")
 		content = r.Replace(content)
 	}
 
-	for k,_ := range c{
-		cat := Categories{Title: title, Category: k}
-		O.Insert(&cat)
+	for k, v := range c {
+		if v == 1 {
+			cat := Categories{Title: title, Category: k}
+			O.Insert(&cat)
+		} else if v == -1 {
+			O.Raw("DELETE FROM categories WHERE `title` = ? AND `category` = ?", title, k)
+		}
 	}
 
 	res = content
