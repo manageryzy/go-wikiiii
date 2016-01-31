@@ -61,7 +61,9 @@ func PageRender(title string) (res string) {
 }
 
 func PageRenderString(page string, safe bool) (res string) {
-	page = pageRenderInclude(page, 0)
+	param := make(map[string]string)
+	page = pageRenderInclude(page, 0,&param)
+	page = pageRenderParam(page,&param)
 	page = pageRenderLinks(page)
 	page = pageRenderMarkdown(page)
 
@@ -108,7 +110,7 @@ func PageGetSQL(title string) (res string, exist bool, safe bool) {
 	return
 }
 
-func pageRenderInclude(content string, layers int) (res string) {
+func pageRenderInclude(content string, layers int,param * map[string]string) (res string) {
 	if layers > MaxIncludeLayers {
 		res = "<pre>Error: Too much layers included!!!</pre>"
 		return
@@ -119,10 +121,25 @@ func pageRenderInclude(content string, layers int) (res string) {
 
 	for _, include := range includes {
 		title := strings.Trim(include, "{} ")
+		titles := strings.Split(title,"|")
+		title = titles[0]
+		for k,v := range titles{
+			if k != 0 {
+				p := strings.Split(v,":")
+				if len(p) == 2{
+					x := strings.Trim(p[0]," ")
+					y := strings.Trim(p[1]," ")
+
+					(*param)[x] = y
+				}else {
+					//Error
+				}
+			}
+		}
 
 		subPage, exist, _ := PageGetSQL(title)
 		if exist {
-			r := strings.NewReplacer(include, pageRenderInclude(subPage, layers+1))
+			r := strings.NewReplacer(include, pageRenderInclude(subPage, layers+1,param))
 			content = r.Replace(content)
 		} else {
 			r := strings.NewReplacer(include, "<pre>Error: Include page not found!</pre>")
@@ -130,6 +147,28 @@ func pageRenderInclude(content string, layers int) (res string) {
 		}
 	}
 
+	res = content
+	return
+}
+
+func pageRenderParam(content string,param * map[string]string) (res string) {
+	re := regexp.MustCompile("\\$\\$[\\w\\d]+")
+	ps := re.FindAllString(content, -1)
+
+	if len(ps)==0{
+		println("no match")
+	}
+
+	for _, p := range ps {
+		k := p[2:]
+		v,exist := (*param)[k]
+		if exist == false {
+			continue
+		}
+
+		r := strings.NewReplacer(p, v)
+		content = r.Replace(content)
+	}
 	res = content
 	return
 }
@@ -183,8 +222,8 @@ func pageRenderLinks(content string) (res string) {
 
 func pageRefreshCategory(content string, title string) (res string) {
 	c := make(map[string]bool)
-
-	content = pageRenderInclude(content, 0)
+	param := make(map[string]string)
+	content = pageRenderInclude(content, 0,&param)
 
 	O.QueryTable("categories").Filter("title", title).Delete()
 
